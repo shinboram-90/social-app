@@ -1,13 +1,16 @@
 import { useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 
 import { PostAuthor } from './PostAuthor';
 // import {TimeAgo} from './TimeAgo';
 // import {ReactionButtons} from './ReactionButtons'
 import { selectPostById } from './postsSlice';
 
-export const SinglePostPage = ({ match }) => {
-  const { postId } = match.params;
+export const SinglePostPage = () => {
+  // const { postId } = match.params;
+  const params = useParams();
+  const postId = params.id;
+  console.log(postId);
 
   const post = useSelector((state) => selectPostById(state, postId));
 

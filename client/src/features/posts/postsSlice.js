@@ -15,7 +15,6 @@ const initialState = postsAdapter.getInitialState({
 
 export const fetchPosts = createAsyncThunk('posts/fetchPosts', async () => {
   const response = await axios.get('api/posts');
-  console.log(response.data.postList);
   return response.data.postList;
 });
 
@@ -77,5 +76,5 @@ export const {
 
 export const selectPostsByUser = createSelector(
   [selectAllPosts, (state, userId) => userId],
-  (posts, userId) => posts.filter((post) => post.user === userId)
+  (posts, userId) => posts.filter((post) => post.userId === userId)
 );

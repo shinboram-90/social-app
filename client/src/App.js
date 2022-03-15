@@ -3,6 +3,8 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Navbar } from './app/Navbar';
 import Missing from './components/Missing';
 import Profile from './components/Profile';
+import Login from './components/Login';
+import Signup from './components/Signup';
 import { PostsList } from './features/posts/PostsList';
 import { AddPostForm } from './features/posts/AddPostForm';
 import { EditPostForm } from './features/posts/EditPostForm';
@@ -32,6 +34,8 @@ function App() {
           <Route path=":userId" element={<UserPage />} />
         </Route>
         <Route path="profile" element={<Profile />} />
+        <Route path="login" element={<Login />} />
+        <Route path="register" element={<Signup />} />
         <Route path="*" element={<Missing />} />
       </Routes>
     </Router>
