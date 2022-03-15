@@ -1,7 +1,7 @@
 const express = require('express');
 // Path module has many useful properties and methods to access and manipulate paths in the file system.
 const path = require('path');
-// const helmet = require('helmet');
+const helmet = require('helmet');
 const cors = require('cors');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
@@ -45,7 +45,7 @@ app.use((req, res, next) => {
 });
 
 app.use(cors());
-// app.use(helmet());
+app.use(helmet());
 app.use(cookieParser());
 app.use(express.json());
 

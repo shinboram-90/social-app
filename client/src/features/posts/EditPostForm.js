@@ -23,7 +23,7 @@ export const EditPostForm = ({ match }) => {
   const onSavePostClicked = async () => {
     if (title && content) {
       dispatch(postUpdated({ id: postId, title, content }));
-      navigate(`api/posts/${postId}`);
+      navigate(`/posts/${postId}`);
     }
   };
 

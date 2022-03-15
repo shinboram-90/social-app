@@ -13,7 +13,7 @@ const PostExcerpt = ({ post }) => {
     <article className="post-excerpt" key={post.id}>
       <h3>{post.title}</h3>
       <div>
-        <PostAuthor userId={post.user} />
+        <PostAuthor userId={post.username} />
         {/* <TimeAgo timestamp = {post.date}/> */}
         <span>{post.created_at}</span>
       </div>
@@ -45,12 +45,7 @@ export const PostsList = () => {
   if (postStatus === 'loading') {
     content = <Spinner text="Loading..." />;
   } else if (postStatus === 'suceeded') {
-    const orderedPosts = posts
-      .slice()
-      .sort((a, b) => b.date.localeCompare(a.date));
-    content = orderedPosts.map((post) => (
-      <PostExcerpt key={post.id} post={post} />
-    ));
+    content = posts.map((post) => <PostExcerpt key={post.id} post={post} />);
   } else if (postStatus === 'failed') {
     content = <div>{error}</div>;
   }
