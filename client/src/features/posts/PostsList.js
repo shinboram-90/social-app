@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Outlet, Link } from 'react-router-dom';
 
 import { Spinner } from '../../components/Spinner';
-import { PostAuthor } from './PostAuthor';
+// import { PostAuthor } from './PostAuthor';
 // import {TimeAgo} from './TimeAgo'
 // import {ReactionButtons} from './ReactionButtons'
 import { selectAllPosts, fetchPosts } from './postsSlice';
@@ -11,7 +11,7 @@ import { selectAllPosts, fetchPosts } from './postsSlice';
 const PostExcerpt = ({ post }) => {
   return (
     <article className="post-excerpt" key={post.id}>
-      <Link to={`/posts/${post.id}`} className="button muted-button">
+      <Link to={`/posts/${post.id}`} className="button">
         <h3>{post.title}</h3>
       </Link>
       <div>
