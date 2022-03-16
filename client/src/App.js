@@ -18,19 +18,21 @@ function App() {
     <Router>
       <Navbar />
       <Routes>
-        <Route
-          path="/"
-          element={
-            <React.Fragment>
-              <AddPostForm />
-              <PostsList />
-            </React.Fragment>
-          }
-        >
-          <Route path=":postId" element={<SinglePostPage />} />
+        <Route path="/">
+          <Route
+            index
+            element={
+              <React.Fragment>
+                <AddPostForm />
+                <PostsList />
+              </React.Fragment>
+            }
+          />
+          <Route path="posts/:postId" element={<SinglePostPage />} />
           <Route path="editPost/:postId" element={<EditPostForm />} />
         </Route>
-        <Route path="users" element={<UsersList />}>
+        <Route path="users">
+          <Route index element={<UsersList />} />
           <Route path=":userId" element={<UserPage />} />
         </Route>
         <Route path="profile" element={<Profile />} />

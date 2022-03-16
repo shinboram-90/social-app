@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 function Searchbar({ placeholder, data }) {
   const [filteredData, setFilteredData] = useState([]);
@@ -36,9 +37,9 @@ function Searchbar({ placeholder, data }) {
           {filteredData.length === 0 ? (
             ''
           ) : (
-            <button id="clearBtn" onClick={clearInput}>
+            <span id="clearBtn" onClick={clearInput}>
               Clear
-            </button>
+            </span>
           )}
         </div>
       </div>
@@ -46,9 +47,12 @@ function Searchbar({ placeholder, data }) {
         <div className="dataResult">
           {filteredData.slice(0, 15).map((user) => {
             return (
-              <a className="dataItem" href={user.username} key={user.id}>
+              // <a className="dataItem" href={user.id} key={user.id}>
+              //   <p>{user.username} </p>
+              // </a>
+              <Link to={`/users/${user.id}`} key={user.id}>
                 <p>{user.username} </p>
-              </a>
+              </Link>
             );
           })}
         </div>

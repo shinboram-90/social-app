@@ -8,17 +8,14 @@ import { selectPostsByUser } from '../posts/postsSlice';
 
 export const UserPage = () => {
   const params = useParams();
-  const userId = params.id;
+  const userId = params.userId;
 
   const user = useSelector((state) => selectUserById(state, userId));
-
-  // const showUser = user.
 
   const postsForUser = useSelector((state) => selectPostsByUser(state, userId));
 
   const postTitles = postsForUser.map((post) => (
     <li key={post.id}>
-      {console.log(user)}
       <Link to={`/posts/${post.id}`}>{post.title}</Link>
     </li>
   ));
@@ -27,6 +24,13 @@ export const UserPage = () => {
     <section>
       {/* <h2>{user}</h2> */}
       <div>{console.log(user)}</div>
+      <ul>
+        <li>{user.username}</li>
+        <li>{user.first_name}</li>
+        <li>{user.last_name}</li>
+        <li>{user.email}</li>
+        <img src={`${user.avatar}`} alt="avatar" />
+      </ul>
 
       <ul>{postTitles}</ul>
       <Outlet />
