@@ -1,0 +1,12 @@
+.input-search {
+  outline-style: none !important;
+}
+
+.toggle-results,
+.toggle-noresults {
+  padding: 4px;
+}
+
+/* .toggle-results:hover {
+  color: blue;
+} */

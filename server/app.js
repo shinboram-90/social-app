@@ -23,7 +23,7 @@ const limiter = rateLimit({
 const app = express();
 
 // const corsOptions = {
-//   origin: process.env.CLIENT_URL,
+//   origin: '*',
 //   credentials: true,
 //   'allowedHeaders': ['sessionId', 'Content-Type'],
 //   'exposedHeaders': ['sessionId'],
@@ -44,7 +44,7 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(cors());
+// app.use(cors(corsOptions));
 app.use(helmet());
 app.use(cookieParser());
 app.use(express.json());

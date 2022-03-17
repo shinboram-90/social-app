@@ -3,8 +3,8 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Navbar } from './app/Navbar';
 import Missing from './components/Missing';
 import Profile from './components/Profile';
-import Login from './components/Login';
-import Signup from './components/Signup';
+import Login from './features/auth/Login';
+import Signup from './features/auth/Signup';
 import { PostsList } from './features/posts/PostsList';
 import { AddPostForm } from './features/posts/AddPostForm';
 import { EditPostForm } from './features/posts/EditPostForm';
@@ -18,26 +18,26 @@ function App() {
     <Router>
       <Navbar />
       <Routes>
-        <Route path="/">
-          <Route
-            index
-            element={
-              <React.Fragment>
-                <AddPostForm />
-                <PostsList />
-              </React.Fragment>
-            }
-          />
-          <Route path="posts/:postId" element={<SinglePostPage />} />
-          <Route path="editPost/:postId" element={<EditPostForm />} />
-        </Route>
-        <Route path="users">
-          <Route index element={<UsersList />} />
-          <Route path=":userId" element={<UserPage />} />
-        </Route>
+        <Route
+          path="/"
+          element={
+            <React.Fragment>
+              <AddPostForm />
+              <PostsList />
+            </React.Fragment>
+          }
+        />
+
+        <Route path="posts/:postId" element={<SinglePostPage />} />
+        <Route path="editPost/:postId" element={<EditPostForm />} />
+
+        <Route path="users" element={<UsersList />} />
+
+        <Route path="users/:userId" element={<UserPage />} />
+
         <Route path="profile" element={<Profile />} />
-        <Route path="login" element={<Login />} />
-        <Route path="register" element={<Signup />} />
+        {/* <Route path="login" element={<Login />} />
+        <Route path="register" element={<Signup />} /> */}
         <Route path="*" element={<Missing />} />
       </Routes>
     </Router>

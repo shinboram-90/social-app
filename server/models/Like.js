@@ -10,6 +10,8 @@ Like.find = async (postId) => {
   return new Promise((resolve, reject) => {
     pool.query(
       'SELECT COUNT(l.id) total FROM likes l INNER JOIN posts p ON l.post_id = p.id WHERE p.id = ? and l.is_liked = 1',
+      // for one post SELECT p.id, COUNT(l.id) total FROM `posts` p, likes l WHERE p.id = l.post_id AND p.id = 88 GROUP BY p.id
+      // SELECT p.id, COUNT(l.id) total FROM `posts` p, likes l WHERE p.id = l.post_id GROUP BY p.id
       postId,
       (err, likes) => {
         if (err) {

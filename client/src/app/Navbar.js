@@ -1,106 +1,123 @@
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+
+import {
+  EuiAvatar,
+  EuiFlexGroup,
+  EuiFlexItem,
+  EuiHeader,
+  EuiHeaderSection,
+  EuiHeaderSectionItem,
+  EuiHeaderSectionItemButton,
+  EuiLink,
+  EuiPopover,
+  EuiSpacer,
+  EuiText,
+  EuiHeaderLinks,
+  EuiHeaderLink,
+  useGeneratedHtmlId,
+} from '@elastic/eui';
 import { selectAllUsers } from '../features/users/usersSlice';
 import { useSelector } from 'react-redux';
 import Searchbar from './Searchbar';
 
-export const Navbar = () => {
-  const users = useSelector(selectAllUsers);
+const HeaderUserMenu = () => {
+  const userPopoverId = useGeneratedHtmlId({ prefix: 'userPopover' });
+  const [isOpen, setIsOpen] = useState(false);
+
+  const onMenuButtonClick = () => {
+    setIsOpen(!isOpen);
+  };
+
+  const closeMenu = () => {
+    setIsOpen(false);
+  };
+
+  const button = (
+    <EuiHeaderSectionItemButton
+      aria-controls={userPopoverId}
+      aria-expanded={isOpen}
+      aria-haspopup="true"
+      aria-label="Account menu"
+      onClick={onMenuButtonClick}
+    >
+      <EuiAvatar name="John Username" size="s" />
+    </EuiHeaderSectionItemButton>
+  );
 
   return (
-    <nav>
-      <section>
-        <h1>Groupomania</h1>
-        <div className="navContent">
-          <div className="navLinks">
-            <Link to="/">Feed</Link>
-            <Link to="/users">Users</Link>
-            <Link to="/profile">Profile</Link>
-            <Link to="/login">Login</Link>
-            <Link to="/register">Register</Link>
-          </div>
-          <Searchbar placeholder="Find a user..." data={users} />
-        </div>
-      </section>
-    </nav>
+    <EuiPopover
+      id={userPopoverId}
+      repositionOnScroll
+      button={button}
+      isOpen={isOpen}
+      anchorPosition="downRight"
+      closePopover={closeMenu}
+      panelPaddingSize="none"
+    >
+      <div style={{ width: 320 }}>
+        <EuiFlexGroup
+          gutterSize="m"
+          className="euiHeaderProfile"
+          responsive={false}
+        >
+          <EuiFlexItem grow={false}>
+            <EuiAvatar name="John Username" size="xl" />
+          </EuiFlexItem>
+
+          <EuiFlexItem>
+            <EuiText>
+              <p>John Username</p>
+            </EuiText>
+
+            <EuiSpacer size="m" />
+
+            <EuiFlexGroup>
+              <EuiFlexItem>
+                <EuiFlexGroup justifyContent="spaceBetween">
+                  <EuiFlexItem grow={false}>
+                    <EuiLink href="/profile">Edit profile</EuiLink>
+                  </EuiFlexItem>
+
+                  <EuiFlexItem grow={false}>
+                    <EuiLink href="/logout">Log out</EuiLink>
+                  </EuiFlexItem>
+                </EuiFlexGroup>
+              </EuiFlexItem>
+            </EuiFlexGroup>
+          </EuiFlexItem>
+        </EuiFlexGroup>
+      </div>
+    </EuiPopover>
   );
 };
 
-// import {
-//   EuiHeader,
-//   EuiHeaderLogo,
-//   EuiHeaderLinks,
-//   EuiHeaderLink,
-//   EuiHeaderSectionItemButton,
-//   EuiBadge,
-//   EuiIcon,
-//   EuiAvatar,
-//   useEuiTheme,
-// } from '@elastic/eui';
-// import { Link } from 'react-router-dom';
-// import { selectAllUsers } from '../features/users/usersSlice';
-// import { useSelector } from 'react-redux';
-// import Searchbar from './Searchbar';
+export const Navbar = () => {
+  // const [theme, setTheme] = useState('default');
+  const users = useSelector(selectAllUsers);
 
-// import React from 'react';
-
-// export const Navbar = () => {
-//   const { euiTheme } = useEuiTheme();
-//   const users = useSelector(selectAllUsers);
-
-//   return (
-//     <nav>
-//       <EuiHeader
-//         theme="dark"
-//         sections={[
-//           {
-//             items: [
-//               <EuiHeaderLogo>GROUPOMANIA</EuiHeaderLogo>,
-//               <EuiHeaderLinks aria-label="App navigation dark theme example">
-//                 <EuiHeaderLink isActive>
-//                   <Link to="/users">Users</Link>
-//                 </EuiHeaderLink>
-//                 <EuiHeaderLink>
-//                   <Searchbar placeholder="Find a user..." data={users} />
-//                 </EuiHeaderLink>
-
-//                 <EuiHeaderLink iconType="help">
-//                   <Link to="/">Feed</Link>
-//                 </EuiHeaderLink>
-//               </EuiHeaderLinks>,
-//             ],
-//             borders: 'right',
-//           },
-//           {
-//             items: [
-//               <EuiBadge
-//                 color={euiTheme.colors.darkestShade}
-//                 iconType="arrowDown"
-//                 iconSide="right"
-//               >
-//                 <Link to="/profile">Profile</Link>
-//               </EuiBadge>,
-//               <EuiHeaderSectionItemButton
-//                 aria-label="2 Notifications"
-//                 notification={'2'}
-//               >
-//                 <EuiIcon type="cheer" size="m" />
-//               </EuiHeaderSectionItemButton>,
-//               <EuiHeaderSectionItemButton aria-label="Account menu">
-//                 <EuiAvatar name="John Username" size="s" />
-//               </EuiHeaderSectionItemButton>,
-//             ],
-//             borders: 'none',
-//           },
-//         ]}
-//       />
-//       <section>
-//         <div className="navContent">
-//           <div className="navLinks">
-//             <Link to="/login">Login</Link>
-//             <Link to="/register">Register</Link>
-//           </div>
-//         </div>
-//       </section>
-//     </nav>
-//   );
-// };
+  return (
+    <>
+      <EuiHeader position="fixed">
+        <EuiHeaderSection>
+          <EuiHeaderSectionItem border="right">
+            Groupomania
+          </EuiHeaderSectionItem>
+        </EuiHeaderSection>
+        <EuiHeaderSection grow={false}>
+          <EuiHeaderSectionItem>
+            <EuiHeaderLinks aria-label="App navigation links example">
+              <EuiHeaderLink href="/">Feed</EuiHeaderLink>
+              <EuiHeaderLink href="/users">Users</EuiHeaderLink>
+              <Searchbar placeholder="Find a user..." data={users} />
+            </EuiHeaderLinks>
+          </EuiHeaderSectionItem>
+        </EuiHeaderSection>
+        <EuiHeaderSection side="right">
+          <EuiHeaderSectionItem>
+            <HeaderUserMenu />
+          </EuiHeaderSectionItem>
+        </EuiHeaderSection>
+      </EuiHeader>
+    </>
+  );
+};

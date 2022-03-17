@@ -20,7 +20,7 @@ const PostExcerpt = ({ post }) => {
         <div>Author : {post.username}</div>
         <div>{post.created_at}</div>
       </div>
-      <p className="post-content">{post.content.substring(0, 100)}</p>
+      <select className="post-content">{post.content.substring(0, 100)}</select>
 
       {/* <ReactionButtons post={post}/> */}
       <Outlet />

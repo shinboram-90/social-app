@@ -1,12 +1,19 @@
 import React, { useState } from 'react';
+import './searchbar.css';
+import { EuiInputPopover, EuiFieldText, EuiIcon } from '@elastic/eui';
+
 import { Link } from 'react-router-dom';
 
 function Searchbar({ placeholder, data }) {
+  const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+  const toggleIsPopoverOpen = (shouldBeOpen = !isPopoverOpen) => {
+    setIsPopoverOpen(shouldBeOpen);
+  };
   const [filteredData, setFilteredData] = useState([]);
   const [wordEntered, setWordEntered] = useState('');
 
-  const handleFilter = (event) => {
-    const searchWord = event.target.value;
+  const handleFilter = (e) => {
+    const searchWord = e.target.value;
     setWordEntered(searchWord);
     const newFilter = data.filter((user) => {
       return user.username.toLowerCase().startsWith(searchWord.toLowerCase());
@@ -17,47 +24,61 @@ function Searchbar({ placeholder, data }) {
     } else {
       setFilteredData(newFilter);
     }
+
+    if (filteredData.length === 0) {
+      toggleIsPopoverOpen(false);
+    }
+    toggleIsPopoverOpen(true);
   };
 
-  const clearInput = () => {
-    setFilteredData([]);
-    setWordEntered('');
-  };
+  // const clearInput = () => {
+  //   setFilteredData([]);
+  //   setWordEntered('');
+  // };
+
+  const input = (
+    <EuiFieldText
+      // onFocus={() => toggleIsPopoverOpen()}
+      aria-label="Popover attached to input element"
+      className="input-search"
+      compressed={true}
+      type="text"
+      placeholder={placeholder}
+      user={wordEntered}
+      onChange={handleFilter}
+    />
+  );
 
   return (
-    <div className="search">
-      <div className="searchInputs">
-        <input
-          type="text"
-          placeholder={placeholder}
-          user={wordEntered}
-          onChange={handleFilter}
-        />
-        <div className="searchIcon">
-          {filteredData.length === 0 ? (
-            ''
-          ) : (
-            <span id="clearBtn" onClick={clearInput}>
-              Clear
-            </span>
-          )}
-        </div>
-      </div>
+    <EuiInputPopover
+      input={input}
+      isOpen={isPopoverOpen}
+      closePopover={() => {
+        toggleIsPopoverOpen(false);
+      }}
+    >
+      {filteredData.length === 0 ? (
+        <p className="toggle-noresults">no results</p>
+      ) : (
+        ''
+      )}
+
       {filteredData.length !== 0 && (
         <div className="dataResult">
           {filteredData.slice(0, 15).map((user) => {
             return (
-              // <a className="dataItem" href={user.id} key={user.id}>
-              //   <p>{user.username} </p>
-              // </a>
-              <Link to={`/users/${user.id}`} key={user.id}>
-                <p>{user.username} </p>
+              <Link
+                className="euiLink euiLink--primary"
+                to={`/users/${user.id}`}
+                key={user.id}
+              >
+                <p className="toggle-results">{user.username}</p>
               </Link>
             );
           })}
         </div>
       )}
-    </div>
+    </EuiInputPopover>
   );
 }
 
