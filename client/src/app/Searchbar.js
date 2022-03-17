@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './searchbar.css';
-import { EuiInputPopover, EuiFieldText, EuiIcon } from '@elastic/eui';
+import { EuiInputPopover, EuiFieldText } from '@elastic/eui';
 
 import { Link } from 'react-router-dom';
 
@@ -31,14 +31,8 @@ function Searchbar({ placeholder, data }) {
     toggleIsPopoverOpen(true);
   };
 
-  // const clearInput = () => {
-  //   setFilteredData([]);
-  //   setWordEntered('');
-  // };
-
   const input = (
     <EuiFieldText
-      // onFocus={() => toggleIsPopoverOpen()}
       aria-label="Popover attached to input element"
       className="input-search"
       compressed={true}
@@ -60,10 +54,6 @@ function Searchbar({ placeholder, data }) {
       {filteredData.length === 0 ? (
         <p className="toggle-noresults">no results</p>
       ) : (
-        ''
-      )}
-
-      {filteredData.length !== 0 && (
         <div className="dataResult">
           {filteredData.slice(0, 15).map((user) => {
             return (

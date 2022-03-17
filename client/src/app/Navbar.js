@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-
+import iconBlack from '../assets/iconBlack.png';
 import {
   EuiAvatar,
   EuiFlexGroup,
@@ -100,7 +100,11 @@ export const Navbar = () => {
       <EuiHeader position="fixed">
         <EuiHeaderSection>
           <EuiHeaderSectionItem border="right">
-            Groupomania
+            <img
+              style={{ height: 150 }}
+              alt="Groupomania logo"
+              src={iconBlack}
+            />
           </EuiHeaderSectionItem>
         </EuiHeaderSection>
         <EuiHeaderSection grow={false}>
