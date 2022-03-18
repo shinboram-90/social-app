@@ -1,13 +1,19 @@
-import { Link, Route } from 'react-router-dom';
+import { Link, Route, useLocation } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
-export const PrivateRoute = ({ component: Component, ...rest }) => {
+export const PrivateRoute = ({ children, ...rest }) => {
+  const location = useLocation();
+  const { token, loading } = useSelector((state) => state.auth);
+  if (loading) {
+    return console.log('loding...');
+  }
   <Route
     {...rest}
-    render={(props) =>
-      localStorage.getItem('token') ? (
-        <Component {...props} />
+    render={({ location }) =>
+      token ? (
+        children
       ) : (
-        <Link to={{ pathname: '/login', state: { from: props.location } }} />
+        <Link to={{ pathname: '/login', state: { from: location } }} />
       )
     }
   />;

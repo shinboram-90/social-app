@@ -12,6 +12,7 @@ import { SinglePostPage } from './features/posts/SinglePostPage';
 import { UsersList } from './features/users/UsersList';
 import { UserPage } from './features/users/UserPage';
 import React from 'react';
+import { PrivateRoute } from './app/PrivateRoute';
 
 function App() {
   return (
@@ -35,9 +36,9 @@ function App() {
 
         <Route path="users/:userId" element={<UserPage />} />
 
-        <Route path="profile" element={<Profile />} />
-        {/* <Route path="login" element={<Login />} />
-        <Route path="register" element={<Signup />} /> */}
+        {/* <PrivateRoute path="profile" element={<Profile />} /> */}
+        <Route path="login" element={<Login />} />
+        {/* <Route path="register" element={<Signup />} /> */}
         <Route path="*" element={<Missing />} />
       </Routes>
     </Router>

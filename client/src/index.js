@@ -8,6 +8,7 @@ import App from './App';
 import store from './app/store';
 import { Provider } from 'react-redux';
 import { fetchUsers } from './features/users/usersSlice';
+// import { getToken } from './utils/HelperFunctions';
 
 const cache = createCache({
   key: 'social-app',
