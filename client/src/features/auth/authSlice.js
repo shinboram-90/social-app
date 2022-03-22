@@ -1,86 +1,96 @@
-import {
-  createSlice,
-  createAsyncThunk,
-  createSelector,
-  createEntityAdapter,
-} from '@reduxjs/toolkit';
-import { getToken, removeToken, setToken } from '../../utils/HelperFunctions';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+// import { getToken, removeToken, setToken } from '../../utils/HelperFunctions';
 import axios from '../../api/axios';
+import authService from './authService';
 
-const authAdapter = createEntityAdapter();
+// get user from localStorage
+const user = JSON.parse(localStorage.getItem('user'));
 
-const initialState = authAdapter.getInitialState({
-  status: 'idle',
-  error: null,
-});
+const initialState = {
+  user: user ? user : null,
+  isError: null,
+  isSuccess: null,
+  // token: null,
+  isLoading: false,
+  message: '',
+};
 
-export const fetchMe = createAsyncThunk('auth/fetchMe', async () => {
-  const accessToken = getToken();
-  axios.defaults.headers.Authorization = `Bearer ${accessToken}`;
-  const response = await axios.get('api/user');
-  return { ...response.data, accessToken };
-});
+export const login = createAsyncThunk(
+  'auth/login',
+  async (payload, dispatch) => {
+    const response = await axios.post('api/login', payload);
+    const token = response.data.token;
+    const data = response.data.user[0];
 
-export const login = createAsyncThunk('auth/login', async (payload) => {
-  const response = await axios.post('api/login', payload);
-  setToken(response.data.token);
-  // navigate to ('/');
-  return response.data.user[0];
-});
+    localStorage.setItem('token', token);
+    localStorage.setItem('user', JSON.stringify(data));
 
-export const signup = createAsyncThunk('auth/signup', async (payload) => {
-  const response = await axios.post('api/signup', payload);
-  // navigate to ('api/login');
-  return response.data;
-});
+    // navigate to ('/');
+    // const pars = JSON.parse(localStorage.getItem('user'));
+    // console.log(pars);
+    // dispatch(updateSuccess(data));
+    return data;
+  }
+);
+
+export const register = createAsyncThunk(
+  'auth/register',
+  async (user, thunkAPI) => {
+    try {
+      return await authService.register(user);
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
 
 export const signOut = createAsyncThunk('auth/signOut', async () => {
-  removeToken();
+  const response = await axios.get('api/logout');
+  console.log(response);
+  localStorage.removeItem('token');
+  localStorage.removeItem('user');
+  return response;
 });
 
 const authSlice = createSlice({
   name: 'auth',
   initialState,
-  reducers: {},
+  // not async here
+  reducers: {
+    reset: (state) => {
+      state.isLoading = false;
+      state.isError = false;
+      state.isSuccess = false;
+      state.message = '';
+    },
+  },
   extraReducers(builder) {
     builder
-      .addCase(signOut.fulfilled, (state, action) => {
-        state.status = 'suceeded';
-        state.userData = {};
-        state.token = null;
+      .addCase(register.pending, (state) => {
+        state.isLoading = true;
       })
-      .addCase(login.pending, (state, action) => {
-        state.loading = 'true';
+      .addCase(register.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.user = action.payload;
       })
-      .addCase(login.fulfilled, (state, action) => {
-        const { accessToken, user } = action.payload;
-        state.token = accessToken;
-        state.userData = user;
-        state.status = 'suceeded';
-      })
-      .addCase(login.rejected, (state, action) => {
-        state.status = 'failed';
-        state.userData = {};
-        state.token = null;
-      })
-      .addCase(signup.pending, (state, action) => {
-        state.loading = 'true';
-      })
-      .addCase(signup.fulfilled, (state, action) => {
-        const { accessToken, user } = action.payload;
-        state.token = accessToken;
-        state.userData = user;
-        state.status = 'suceeded';
-      })
-      .addCase(signup.rejected, (state, action) => {
-        state.status = 'failed';
-        state.userData = {};
-        state.token = null;
+      .addCase(register.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload;
+        state.user = null;
       });
+    // .addCase(addNewPost.fulfilled, postsAdapter.addOne);
   },
 });
 
-export const {} = authSlice.actions;
+export const { reset } = authSlice.actions;
 
 export default authSlice.reducer;
 
@@ -95,4 +105,4 @@ export default authSlice.reducer;
 //   (posts, userId) => posts.filter((post) => post.userId === userId)
 // );
 
-export const authSelector = (state) => state.auth;
+// export const authSelector = (state) => state.auth;

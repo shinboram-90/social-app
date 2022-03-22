@@ -18,6 +18,20 @@ exports.logout = async (req, res, next) => {
   }
 };
 
+// exports.getCurrentUser = async (req, res, next) => {
+//   try {
+//     const getCurrentUser = await User.findByEmail();
+//     if (getCurrentUser)
+//     return res
+//       .clearCookie('access_token')
+//       .status(200)
+//       .json({ message: 'Successfully logged out 😏 🍀' });
+//   } catch (e) {
+//     console.log(e);
+//     res.sendStatus(500);
+//   }
+// };
+
 exports.getAllActive = async (req, res, next) => {
   try {
     const userList = await User.findAllActive();
@@ -47,7 +61,9 @@ exports.deleteUser = async (req, res, next) => {
     }
 
     // This line allow us to verify if the same user can delete his profile
-    if (user[0].id !== req.auth.userId) {
+    if (user[0].id !== req.auth) {
+      console.log(typeof user[0].id);
+      console.log(typeof req.auth);
       return res
         .status(403)
         .json({ error: 'Unauthorized request, id not matching' });
@@ -72,58 +88,64 @@ exports.deleteUser = async (req, res, next) => {
 };
 
 exports.modifyUser = async (req, res, next) => {
-  const id = req.params.id;
+  const id = req.auth;
+  // use only one = sign because one is number, and second is string
+  if (id != req.params.id) {
+    res.status(404).json({ message: 'Not the same user ID' });
+  } else {
+    // console.log(`reg.auth: ${req.auth}`);
 
-  // building the user object, spread gets all details, just building the avatar file
-  if (req.files) {
-    const user = {
-      ...req.body,
-      avatar: `${req.protocol}://${req.get('host')}/uploads/avatars/${
-        req.files.avatar[0].filename
-      }`,
-    };
-    try {
-      const getUser = await User.findById(id);
-      console.log(req.files);
-      const avatar = getUser[0].avatar;
+    // building the user object, spread gets all details, just building the avatar file
+    if (req.files) {
+      const user = {
+        ...req.body,
+        avatar: `${req.protocol}://${req.get('host')}/uploads/avatars/${
+          req.files.avatar[0].filename
+        }`,
+      };
+      try {
+        const getUser = await User.findById(id);
+        console.log(req.files);
+        const avatar = getUser[0].avatar;
 
-      // User already has one avatar, unlink the existing one and replace it
-      if (avatar) {
-        const filename = avatar.split('avatars/')[1];
+        // User already has one avatar, unlink the existing one and replace it
+        if (avatar) {
+          const filename = avatar.split('avatars/')[1];
 
-        fs.unlink(`uploads/avatars/${filename}`, async () => {
+          fs.unlink(`uploads/avatars/${filename}`, async () => {
+            const updatedUser = await User.update(user, id);
+            // console.log(req.files.avatar);
+            if (updatedUser) {
+              res.status(200).json({
+                modifications: req.body,
+                avatar: avatar,
+              });
+            } else {
+              res.status(404).json({ message: 'Cannot modify user infos' });
+            }
+          });
+        } else {
+          // User has no avatar
           const updatedUser = await User.update(user, id);
-          // console.log(req.files.avatar);
           if (updatedUser) {
             res.status(200).json({
-              modifications: req.body,
-              avatar: avatar,
+              modifications: user,
             });
           } else {
             res.status(404).json({ message: 'Cannot modify user infos' });
           }
-        });
-      } else {
-        // User has no avatar
-        const updatedUser = await User.update(user, id);
-        if (updatedUser) {
-          res.status(200).json({
-            modifications: user,
-          });
-        } else {
-          res.status(404).json({ message: 'Cannot modify user infos' });
         }
+      } catch (e) {
+        console.log(e);
+        res.sendStatus(500);
       }
-    } catch (e) {
-      console.log(e);
-      res.sendStatus(500);
-    }
-  } else {
-    const updatedUser = await User.update(req.body, id);
-    if (updatedUser) {
-      res.status(200).json({
-        modifications: req.body,
-      });
+    } else {
+      const updatedUser = await User.update(req.body, id);
+      if (updatedUser) {
+        res.status(200).json({
+          modifications: req.body,
+        });
+      }
     }
   }
 };

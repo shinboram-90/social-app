@@ -19,12 +19,12 @@ router.post(
 router.post('/login', userCtrl.login);
 
 // Need authentification in order to do so
-router.get('/logout', userCtrl.logout);
+router.get('/logout', auth, userCtrl.logout);
 router.get('/users', userCtrl.getAllActive);
 router.get('/users/:id', userCtrl.getOneUser);
 router.put(
   '/users/:id',
-
+  auth,
   multer,
   validator.checkBody,
   validator.checkRules,

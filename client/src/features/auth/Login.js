@@ -1,22 +1,29 @@
 import { useState, useEffect } from 'react';
-import { getToken } from '../../utils/HelperFunctions';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+// import { getToken } from '../../utils/HelperFunctions';
+import { useNavigate } from 'react-router-dom';
 
 import { useSelector, useDispatch } from 'react-redux';
 import { login } from '../auth/authSlice';
 
 const Login = () => {
+  const navigate = useNavigate();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const dispatch = useDispatch();
-  const { token, loading } = useSelector((state) => state.auth);
+  // const token = useSelector((state) => state.auth.token);
+  const { userData, token, loading } = useSelector((state) => state.auth);
+  console.log(userData);
 
-  const navigate = useNavigate();
   // const location = useLocation();
 
-  if (token || getToken()) {
-    navigate('/profile');
-  }
+  useEffect(() => {
+    if (token || localStorage.getItem('token')) {
+      console.log('you are logged in');
+      console.log(localStorage);
+      // navigate('/profile');
+    }
+  }, []);
+
   // const from = location.state?.from?.pathname || '/';
 
   const handleLogin = (e) => {
@@ -25,7 +32,7 @@ const Login = () => {
   };
 
   return (
-    <section>
+    <section style={{ padding: 100 }}>
       <h1>WELCOME TO GROUPOMANIA</h1>
 
       <form onSubmit={handleLogin} method="POST">

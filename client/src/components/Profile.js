@@ -1,9 +1,14 @@
 import { Outlet, useNavigate, Link } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { login } from '../features/auth/authSlice';
+
 // import { useContext } from 'react';
 // import useAuth from '../hooks/useAuth';
 // import AuthContext from '../context/AuthProvider';
 
-const Home = () => {
+const Profile = () => {
+  const dispatch = useDispatch();
+  const { userData, loading, token } = useSelector((state) => state.auth);
   // const { auth } = useAuth();
   // const { setAuth } = useContext(AuthContext);
   const navigate = useNavigate();
@@ -29,12 +34,12 @@ const Home = () => {
 
       <h1>My Profile</h1>
       <br />
-      {/* <div>
-        <header as="h2" icon textAlign="center">
-          <div>You are logged in as {user.username}</div>
+      <div>
+        <header>
+          <div>You are logged in as {console.log(userData.username)}</div>
         </header>
-        <img alt="avatar" centered size="large" src={user.avatar} />
-      </div> */}
+        {/* <img alt="avatar" centered size="large" src={user.avatar} /> */}
+      </div>
 
       <div className="flexGrow">
         <button>Sign Out</button>
@@ -43,4 +48,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default Profile;

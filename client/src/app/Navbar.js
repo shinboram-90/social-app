@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import iconBlack from '../assets/iconBlack.png';
+import { useDispatch } from 'react-redux';
+import { signOut } from '../features/auth/authSlice';
 import {
   EuiAvatar,
   EuiFlexGroup,
@@ -19,10 +21,13 @@ import {
 import { selectAllUsers } from '../features/users/usersSlice';
 import { useSelector } from 'react-redux';
 import Searchbar from './Searchbar';
+import {} from 'react-icons/fa';
 
 const HeaderUserMenu = () => {
   const userPopoverId = useGeneratedHtmlId({ prefix: 'userPopover' });
   const [isOpen, setIsOpen] = useState(false);
+
+  const dispatch = useDispatch();
 
   const onMenuButtonClick = () => {
     setIsOpen(!isOpen);
@@ -79,7 +84,9 @@ const HeaderUserMenu = () => {
                   </EuiFlexItem>
 
                   <EuiFlexItem grow={false}>
-                    <EuiLink href="/logout">Log out</EuiLink>
+                    <EuiLink onClick={() => dispatch(signOut())} href="/logout">
+                      Log out
+                    </EuiLink>
                   </EuiFlexItem>
                 </EuiFlexGroup>
               </EuiFlexItem>
