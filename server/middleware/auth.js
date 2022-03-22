@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 exports.auth = (req, res, next) => {
   try {
     // Verify if cookies are present in the request
-    const { cookies, headers } = req;
+    const { cookies } = req;
     if (!cookies || !cookies.access_token) {
       return res
         .status(401)
@@ -16,8 +16,8 @@ exports.auth = (req, res, next) => {
     const decodedToken = jwt.verify(token, process.env.TOKEN_SECRET);
     const userId = decodedToken.userId;
 
-    req.auth = { userId };
-    if (req.body.id && req.body.id !== userId) {
+    req.auth = userId;
+    if (!userId) {
       throw 'Invalid user ID';
     } else {
       next();
@@ -31,7 +31,7 @@ exports.auth = (req, res, next) => {
 
 exports.authAdmin = (req, res, next) => {
   try {
-    const { cookies, headers } = req;
+    const { cookies } = req;
     if (!cookies || !cookies.access_token) {
       return res
         .status(401)
@@ -40,14 +40,17 @@ exports.authAdmin = (req, res, next) => {
 
     const token = cookies.access_token;
     const decodedToken = jwt.verify(token, process.env.TOKEN_SECRET);
-    const role = decodedToken.role;
+    const adminRole = decodedToken.role;
 
-    if (role !== 'admin') {
+    req.admin = adminRole;
+    if (adminRole !== 'admin') {
       throw 'NOT AN ADMIN';
     } else {
       next();
     }
   } catch {
-    return res.status(401).json({ message: 'Token not available' });
+    return res
+      .status(401)
+      .json({ message: 'You must be an admin to access this page !' });
   }
 };

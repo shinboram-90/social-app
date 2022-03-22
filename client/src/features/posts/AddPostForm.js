@@ -44,7 +44,7 @@ export const AddPostForm = () => {
   //need to get the current user instead...
 
   return (
-    <section>
+    <section style={{ padding: 100 }}>
       <h2>Add a new post</h2>
       <form>
         <label htmlFor="postTitle">Title:</label>

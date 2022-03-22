@@ -3,6 +3,8 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Navbar } from './app/Navbar';
 import Missing from './components/Missing';
 import Profile from './components/Profile';
+import Logout from './components/Logout';
+import Dashboard from './components/Dashboard';
 import Login from './features/auth/Login';
 import Signup from './features/auth/Signup';
 import { PostsList } from './features/posts/PostsList';
@@ -13,6 +15,9 @@ import { UsersList } from './features/users/UsersList';
 import { UserPage } from './features/users/UserPage';
 import React from 'react';
 import { PrivateRoute } from './app/PrivateRoute';
+import { AdminRoute } from './app/AdminRoute';
+// import ToastContainer from Toastify
+import { useSelector } from 'react-redux';
 
 function App() {
   return (
@@ -36,9 +41,28 @@ function App() {
 
         <Route path="users/:userId" element={<UserPage />} />
 
-        {/* <PrivateRoute path="profile" element={<Profile />} /> */}
+        <Route
+          path="profile"
+          element={
+            <PrivateRoute>
+              <Profile />
+            </PrivateRoute>
+          }
+        />
+        {/* <Route path="profile" element={<Profile />} /> */}
+
+        <Route
+          path="dashboard"
+          element={
+            <AdminRoute>
+              <Dashboard />
+            </AdminRoute>
+          }
+        />
+
         <Route path="login" element={<Login />} />
-        {/* <Route path="register" element={<Signup />} /> */}
+        <Route path="register" element={<Signup />} />
+        <Route path="logout" element={<Logout />} />
         <Route path="*" element={<Missing />} />
       </Routes>
     </Router>

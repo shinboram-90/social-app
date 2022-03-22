@@ -24,7 +24,7 @@ router.get('/users', userCtrl.getAllActive);
 router.get('/users/:id', userCtrl.getOneUser);
 router.put(
   '/users/:id',
-
+  auth,
   multer,
   validator.checkBody,
   validator.checkRules,

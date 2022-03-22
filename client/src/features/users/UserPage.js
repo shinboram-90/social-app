@@ -21,7 +21,7 @@ export const UserPage = () => {
   ));
 
   return (
-    <section>
+    <section style={{ padding: 100 }}>
       {/* <h2>{user}</h2> */}
       <div>{console.log(user)}</div>
       <ul>

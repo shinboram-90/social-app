@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import iconBlack from '../assets/iconBlack.png';
+import { useSelector, useDispatch } from 'react-redux';
+import { logout, reset } from '../features/auth/authSlice';
 import {
   EuiAvatar,
   EuiFlexGroup,
@@ -17,10 +19,21 @@ import {
   useGeneratedHtmlId,
 } from '@elastic/eui';
 import { selectAllUsers } from '../features/users/usersSlice';
-import { useSelector } from 'react-redux';
 import Searchbar from './Searchbar';
+import { useNavigate } from 'react-router-dom';
+// import {} from 'react-icons/fa';
 
 const HeaderUserMenu = () => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.auth);
+  // console.log(user.user[0].username);
+
+  const onLogout = () => {
+    dispatch(logout());
+    dispatch(reset());
+    navigate('/logout');
+  };
   const userPopoverId = useGeneratedHtmlId({ prefix: 'userPopover' });
   const [isOpen, setIsOpen] = useState(false);
 
@@ -40,7 +53,12 @@ const HeaderUserMenu = () => {
       aria-label="Account menu"
       onClick={onMenuButtonClick}
     >
-      <EuiAvatar name="John Username" size="s" />
+      {' '}
+      {user ? (
+        <EuiAvatar name={user.user[0].username} size="s" />
+      ) : (
+        <EuiAvatar name="Nobody" size="s" />
+      )}
     </EuiHeaderSectionItemButton>
   );
 
@@ -61,27 +79,41 @@ const HeaderUserMenu = () => {
           responsive={false}
         >
           <EuiFlexItem grow={false}>
-            <EuiAvatar name="John Username" size="xl" />
+            {user ? (
+              <EuiAvatar name={user.user[0].username} size="xl" />
+            ) : (
+              <EuiAvatar name="Nobody" size="xl" />
+            )}
           </EuiFlexItem>
 
           <EuiFlexItem>
-            <EuiText>
-              <p>John Username</p>
-            </EuiText>
+            <EuiText>{user ? <p>{user.user[0].username}</p> : ''}</EuiText>
 
             <EuiSpacer size="m" />
 
             <EuiFlexGroup>
               <EuiFlexItem>
-                <EuiFlexGroup justifyContent="spaceBetween">
-                  <EuiFlexItem grow={false}>
-                    <EuiLink href="/profile">Edit profile</EuiLink>
-                  </EuiFlexItem>
+                {user ? (
+                  <EuiFlexGroup justifyContent="spaceBetween">
+                    <EuiFlexItem grow={false}>
+                      <EuiLink href="/profile">Edit profile</EuiLink>
+                    </EuiFlexItem>
 
-                  <EuiFlexItem grow={false}>
-                    <EuiLink href="/logout">Log out</EuiLink>
-                  </EuiFlexItem>
-                </EuiFlexGroup>
+                    <EuiFlexItem grow={false}>
+                      <EuiLink onClick={onLogout}>Log out</EuiLink>
+                    </EuiFlexItem>
+                  </EuiFlexGroup>
+                ) : (
+                  <EuiFlexGroup justifyContent="spaceBetween">
+                    <EuiFlexItem grow={false}>
+                      <EuiLink href="/login">Login</EuiLink>
+                    </EuiFlexItem>
+
+                    <EuiFlexItem grow={false}>
+                      <EuiLink href="/register">Register</EuiLink>
+                    </EuiFlexItem>
+                  </EuiFlexGroup>
+                )}
               </EuiFlexItem>
             </EuiFlexGroup>
           </EuiFlexItem>
@@ -92,7 +124,6 @@ const HeaderUserMenu = () => {
 };
 
 export const Navbar = () => {
-  // const [theme, setTheme] = useState('default');
   const users = useSelector(selectAllUsers);
 
   return (
