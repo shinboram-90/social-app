@@ -23,7 +23,7 @@ export const SinglePostPage = () => {
   }
 
   return (
-    <section>
+    <section style={{ padding: 100 }}>
       <article className="post">
         {console.log(post)}
         <h2>{post.title}</h2>

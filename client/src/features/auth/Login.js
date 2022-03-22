@@ -1,50 +1,66 @@
 import { useState, useEffect } from 'react';
-// import { getToken } from '../../utils/HelperFunctions';
+import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
-import { useSelector, useDispatch } from 'react-redux';
-import { login } from '../auth/authSlice';
+import { login, reset } from '../auth/authSlice';
+import Spinner from '../../components/Spinner';
 
 const Login = () => {
-  const navigate = useNavigate();
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const dispatch = useDispatch();
-  // const token = useSelector((state) => state.auth.token);
-  const { userData, token, loading } = useSelector((state) => state.auth);
-  console.log(userData);
+  const [data, setData] = useState({
+    username: '',
+    password: '',
+  });
 
-  // const location = useLocation();
+  const { username, password } = data;
+
+  const { user, isLoading, isError, isSuccess, message } = useSelector(
+    (state) => state.auth
+  );
+
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    if (token || localStorage.getItem('token')) {
-      console.log('you are logged in');
-      console.log(localStorage);
-      // navigate('/profile');
+    if (isError) {
+      console.log('Error verify toaster alerts');
     }
-  }, []);
+    if (isSuccess || user) {
+      navigate('/');
+    }
+    dispatch(reset());
+  }, [user, isError, isSuccess, message, navigate, dispatch]);
 
-  // const from = location.state?.from?.pathname || '/';
+  const handleChange = (e) => {
+    setData((prevState) => ({
+      ...prevState,
+      [e.target.name]: e.target.value,
+    }));
+  };
 
-  const handleLogin = (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    dispatch(login({ username, password }));
+
+    const userData = {
+      username,
+      password,
+    };
+    dispatch(login(userData));
   };
 
   return (
     <section style={{ padding: 100 }}>
       <h1>WELCOME TO GROUPOMANIA</h1>
 
-      <form onSubmit={handleLogin} method="POST">
+      <form onSubmit={handleSubmit} method="POST">
         <label htmlFor="username">
           Username
           <input
             type="text"
-            placeholder="Username"
+            id="username"
             name="username"
+            onChange={handleChange}
+            placeholder="Enter your username"
             value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            required
           />
         </label>
 
@@ -54,12 +70,12 @@ const Login = () => {
             type="password"
             name="password"
             value={password}
-            placeholder="Password"
-            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Enter your password"
+            onChange={handleChange}
             required
           />
         </label>
-        {loading ? (
+        {isLoading ? (
           <div className="loading">
             <span>Loading...</span>
           </div>

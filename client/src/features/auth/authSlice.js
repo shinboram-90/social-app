@@ -1,6 +1,4 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-// import { getToken, removeToken, setToken } from '../../utils/HelperFunctions';
-import axios from '../../api/axios';
 import authService from './authService';
 
 // get user from localStorage
@@ -15,23 +13,17 @@ const initialState = {
   message: '',
 };
 
-export const login = createAsyncThunk(
-  'auth/login',
-  async (payload, dispatch) => {
-    const response = await axios.post('api/login', payload);
-    const token = response.data.token;
-    const data = response.data.user[0];
-
-    localStorage.setItem('token', token);
-    localStorage.setItem('user', JSON.stringify(data));
-
-    // navigate to ('/');
-    // const pars = JSON.parse(localStorage.getItem('user'));
-    // console.log(pars);
-    // dispatch(updateSuccess(data));
-    return data;
+export const login = createAsyncThunk('auth/login', async (user, thunkAPI) => {
+  try {
+    return await authService.login(user);
+  } catch (error) {
+    const message =
+      (error.response && error.response.data && error.response.data.message) ||
+      error.message ||
+      error.toString();
+    return thunkAPI.rejectWithValue(message);
   }
-);
+});
 
 export const register = createAsyncThunk(
   'auth/register',
@@ -50,13 +42,22 @@ export const register = createAsyncThunk(
   }
 );
 
-export const signOut = createAsyncThunk('auth/signOut', async () => {
-  const response = await axios.get('api/logout');
-  console.log(response);
-  localStorage.removeItem('token');
-  localStorage.removeItem('user');
-  return response;
-});
+export const logout = createAsyncThunk(
+  'auth/logout',
+  async (user, thunkAPI) => {
+    try {
+      return await authService.logout(user);
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
 
 const authSlice = createSlice({
   name: 'auth',
@@ -85,24 +86,27 @@ const authSlice = createSlice({
         state.isError = true;
         state.message = action.payload;
         state.user = null;
+      })
+      .addCase(login.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(login.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.user = action.payload;
+      })
+      .addCase(login.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload;
+        state.user = null;
+      })
+      .addCase(logout.fulfilled, (state, action) => {
+        state.user = null;
       });
-    // .addCase(addNewPost.fulfilled, postsAdapter.addOne);
   },
 });
 
 export const { reset } = authSlice.actions;
 
 export default authSlice.reducer;
-
-// export const {
-//   selectAll: selectAllPosts,
-//   selectById: selectPostById,
-//   selectIds: selectPostIds,
-// } = postsAdapter.getSelectors((state) => state.posts);
-
-// export const selectPostsByUser = createSelector(
-//   [selectAllPosts, (state, userId) => userId],
-//   (posts, userId) => posts.filter((post) => post.userId === userId)
-// );
-
-// export const authSelector = (state) => state.auth;

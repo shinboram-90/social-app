@@ -20,7 +20,7 @@ const PostExcerpt = ({ post }) => {
         <div>Author : {post.username}</div>
         <div>{post.created_at}</div>
       </div>
-      <select className="post-content">{post.content.substring(0, 100)}</select>
+      {/* <select className="post-content">{post.content.substring(0, 100)}</select> */}
 
       {/* <ReactionButtons post={post}/> */}
       <Outlet />
@@ -53,10 +53,10 @@ export const PostsList = () => {
   }
 
   return (
-    <section className="posts-List">
+    <section style={{ padding: 100 }} className="posts-List">
       <h2>Posts</h2>
       <div>{content}</div>
-      <div>Yo: {console.log(postStatus)}</div>
+      {/* <div>Yo: {console.log(postStatus)}</div> */}
     </section>
   );
 };
