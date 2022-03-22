@@ -6,11 +6,17 @@ import { useParams, Link } from 'react-router-dom';
 // import {ReactionButtons} from './ReactionButtons'
 import { selectPostById } from './postsSlice';
 
+import { getComments } from '../comments/commentsSlice';
+
 export const SinglePostPage = () => {
   // const { postId } = match.params;
   const params = useParams();
   const postId = params.postId;
   console.log(postId);
+
+  const { comments, isLoading, isError, isSuccess, message } = useSelector(
+    (state) => state.comments
+  );
 
   const post = useSelector((state) => selectPostById(state, postId));
 
@@ -37,6 +43,11 @@ export const SinglePostPage = () => {
               : ''}
           </div>
           <img src={`${post.image}`} alt="" />
+          <p>
+            {comments.map((comment) => (
+              <li key={comment.id}>comment</li>
+            ))}
+          </p>
 
           <Link to={`/editPost/${post.id}`} className="button">
             Edit post

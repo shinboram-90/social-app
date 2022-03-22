@@ -1,19 +1,61 @@
-import {
-  createSlice,
-  createAsyncThunk,
-  createEntityAdapter,
-} from '@reduxjs/toolkit';
-import axios from '../../api/axios';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import commentService from './commentService';
 
-const commentsAdapter = createEntityAdapter();
+const initialState = {
+  comments: [],
+  isError: false,
+  isSuccess: false,
+  isLoading: false,
+  message: '',
+};
 
-const initialState = commentsAdapter.getInitialState();
+export const createComment = createAsyncThunk(
+  'comments/create',
+  async (commentData, thunkAPI) => {
+    try {
+      const token = thunkAPI.getState().auth.user.token;
+      return await commentService.createComment(commentData, token);
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
 
-export const fetchComments = createAsyncThunk(
-  'comments/fetchcomments',
-  async () => {
-    const response = await axios.get(`api/posts/${post.id}comments`);
-    return response.data.commentList;
+export const getComments = createAsyncThunk(
+  'comments/create',
+  async (commentData, thunkAPI) => {
+    try {
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
+export const deleteComment = createAsyncThunk(
+  'comments/create',
+  async (commentData, thunkAPI) => {
+    try {
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
   }
 );
 
@@ -22,11 +64,51 @@ const commentsSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers(builder) {
-    builder.addCase(fetchComments.fulfilled, commentsAdapter.setAll);
+    builder
+      .addCase(createComment.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(createComment.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.comments.push(action.payload);
+      })
+      .addCase(createComment.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload;
+      })
+      .addCase(getComments.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getComments.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.comments.push(action.payload);
+      })
+      .addCase(getComments.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload;
+      })
+      .addCase(deleteComment.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(deleteComment.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.comments = state.comments.filter(
+          (comment) => comment.id !== action.payload.id
+        );
+      })
+      .addCase(deleteComment.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload;
+      });
   },
 });
 
-export default commentsSlice.reducer;
+export const { reset } = commentsSlice.actions;
 
-export const { selectAll: selectAllcomments, selectById: selectcommentById } =
-  commentsAdapter.getSelectors((state) => state.comments);
+export default commentsSlice.reducer;

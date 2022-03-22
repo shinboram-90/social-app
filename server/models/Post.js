@@ -13,7 +13,7 @@ const Post = function (post) {
 Post.findAll = async () => {
   return new Promise((resolve, reject) => {
     pool.query(
-      'SELECT p.*, u.avatar, u.username FROM posts p JOIN users u ON p.user_id = u.id WHERE p.status = "published" ORDER BY p.created_at DESC',
+      'SELECT p.*, u.avatar, u.username, COUNT(c.id) as comments FROM posts p JOIN users u ON p.user_id = u.id LEFT JOIN comments c ON p.id = c.post_id WHERE p.status = "published" GROUP BY p.id',
       (err, posts) => {
         if (err) {
           return reject(err);

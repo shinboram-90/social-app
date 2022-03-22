@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import iconBlack from '../assets/iconBlack.png';
+import iconBlack from '../assets/icon-left-font-monochrome-black.svg';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout, reset } from '../features/auth/authSlice';
+import { Link } from 'react-router-dom';
 import {
   EuiAvatar,
   EuiFlexGroup,
@@ -21,7 +22,8 @@ import {
 import { selectAllUsers } from '../features/users/usersSlice';
 import Searchbar from './Searchbar';
 import { useNavigate } from 'react-router-dom';
-// import {} from 'react-icons/fa';
+// import { FaUser } from 'react-icons/fa';
+import defaultUser from '../assets/default-user-icon.jpg';
 
 const HeaderUserMenu = () => {
   const navigate = useNavigate();
@@ -57,7 +59,7 @@ const HeaderUserMenu = () => {
       {user ? (
         <EuiAvatar name={user.user[0].username} size="s" />
       ) : (
-        <EuiAvatar name="Nobody" size="s" />
+        <EuiAvatar name="Default" size="s" imageUrl={defaultUser} />
       )}
     </EuiHeaderSectionItemButton>
   );
@@ -82,7 +84,7 @@ const HeaderUserMenu = () => {
             {user ? (
               <EuiAvatar name={user.user[0].username} size="xl" />
             ) : (
-              <EuiAvatar name="Nobody" size="xl" />
+              <EuiAvatar name="Default" size="xl" imageUrl={defaultUser} />
             )}
           </EuiFlexItem>
 
@@ -130,12 +132,14 @@ export const Navbar = () => {
     <>
       <EuiHeader position="fixed">
         <EuiHeaderSection>
-          <EuiHeaderSectionItem border="right">
-            <img
-              style={{ height: 150 }}
-              alt="Groupomania logo"
-              src={iconBlack}
-            />
+          <EuiHeaderSectionItem>
+            <Link to="/" style={{ display: 'flex', marginLeft: 10 }}>
+              <img
+                style={{ height: 30 }}
+                alt="Groupomania logo"
+                src={iconBlack}
+              />
+            </Link>
           </EuiHeaderSectionItem>
         </EuiHeaderSection>
         <EuiHeaderSection grow={false}>
