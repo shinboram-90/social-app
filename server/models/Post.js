@@ -13,7 +13,8 @@ const Post = function (post) {
 Post.findAll = async () => {
   return new Promise((resolve, reject) => {
     pool.query(
-      'SELECT p.*, u.avatar, u.username, COUNT(c.id) as comments FROM posts p JOIN users u ON p.user_id = u.id LEFT JOIN comments c ON p.id = c.post_id WHERE p.status = "published" GROUP BY p.id',
+      'SELECT p.*, u.avatar, u.username, COUNT(c.id) as comments FROM posts p JOIN users u ON p.user_id = u.id LEFT JOIN comments c ON p.id = c.post_id WHERE p.status = "published" GROUP BY p.id ORDER BY p.created_at DESC',
+      // 'SELECT p.*, u.avatar, u.username, COUNT(c.id) as comments, COUNT(l.id) as total_likes FROM posts p JOIN users u ON p.user_id = u.id LEFT JOIN comments c ON p.id = c.post_id LEFT JOIN likes l ON p.id = l.post_id WHERE p.status = "published" GROUP BY p.id ORDER BY p.created_at DESC',
       (err, posts) => {
         if (err) {
           return reject(err);
@@ -41,8 +42,24 @@ Post.create = async (newPost) => {
 Post.findById = async (id) => {
   return new Promise((resolve, reject) => {
     pool.query(
-      'SELECT  p.*, u.avatar, u.username FROM posts p JOIN users u ON p.user_id = u.id WHERE p.id=? ORDER BY p.created_at DESC',
+      'SELECT p.*, u.avatar, u.username FROM posts p JOIN users u ON p.user_id = u.id WHERE p.id=? ORDER BY p.created_at DESC',
       id,
+      (err, post) => {
+        if (err) {
+          return reject(err);
+        }
+        console.log(post);
+        return resolve(post);
+      }
+    );
+  });
+};
+
+Post.findByMyId = async (userId) => {
+  return new Promise((resolve, reject) => {
+    pool.query(
+      'SELECT p.*, u.username, COUNT(c.id) as comments FROM posts p JOIN users u ON p.user_id = u.id LEFT JOIN comments c ON p.id = c.post_id WHERE p.status = "published" AND u.id = ? GROUP BY p.id ORDER BY p.created_at DESC',
+      userId,
       (err, post) => {
         if (err) {
           return reject(err);

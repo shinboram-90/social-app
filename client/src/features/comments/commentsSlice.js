@@ -77,35 +77,35 @@ const commentsSlice = createSlice({
         state.isLoading = false;
         state.isError = true;
         state.message = action.payload;
-      })
-      .addCase(getComments.pending, (state) => {
-        state.isLoading = true;
-      })
-      .addCase(getComments.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.isSuccess = true;
-        state.comments.push(action.payload);
-      })
-      .addCase(getComments.rejected, (state, action) => {
-        state.isLoading = false;
-        state.isError = true;
-        state.message = action.payload;
-      })
-      .addCase(deleteComment.pending, (state) => {
-        state.isLoading = true;
-      })
-      .addCase(deleteComment.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.isSuccess = true;
-        state.comments = state.comments.filter(
-          (comment) => comment.id !== action.payload.id
-        );
-      })
-      .addCase(deleteComment.rejected, (state, action) => {
-        state.isLoading = false;
-        state.isError = true;
-        state.message = action.payload;
       });
+    // .addCase(getComments.pending, (state) => {
+    //   state.isLoading = true;
+    // })
+    // .addCase(getComments.fulfilled, (state, action) => {
+    //   state.isLoading = false;
+    //   state.isSuccess = true;
+    //   state.comments.push(action.payload);
+    // })
+    // .addCase(getComments.rejected, (state, action) => {
+    //   state.isLoading = false;
+    //   state.isError = true;
+    //   state.message = action.payload;
+    // })
+    // .addCase(deleteComment.pending, (state) => {
+    //   state.isLoading = true;
+    // })
+    // .addCase(deleteComment.fulfilled, (state, action) => {
+    //   state.isLoading = false;
+    //   state.isSuccess = true;
+    //   state.comments = state.comments.filter(
+    //     (comment) => comment.id !== action.payload.id
+    //   );
+    // })
+    // .addCase(deleteComment.rejected, (state, action) => {
+    //   state.isLoading = false;
+    //   state.isError = true;
+    //   state.message = action.payload;
+    // });
   },
 });
 

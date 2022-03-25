@@ -18,6 +18,8 @@ export const SinglePostPage = () => {
     (state) => state.comments
   );
 
+  console.log(comments);
+
   const post = useSelector((state) => selectPostById(state, postId));
 
   if (!post) {
@@ -48,6 +50,7 @@ export const SinglePostPage = () => {
               <li key={comment.id}>comment</li>
             ))}
           </p>
+          <p>{post.comments !== 0 ? post.comments + ' comments' : ''}</p>
 
           <Link to={`/editPost/${post.id}`} className="button">
             Edit post

@@ -21,7 +21,7 @@ router.post('/login', userCtrl.login);
 // Need authentification in order to do so
 router.get('/logout', userCtrl.logout);
 router.get('/users', userCtrl.getAllActive);
-router.get('/users/:id', userCtrl.getOneUser);
+router.get('/users/:id', auth, userCtrl.getOneUser);
 router.put(
   '/users/:id',
   auth,
