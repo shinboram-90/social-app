@@ -1,4 +1,4 @@
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { useParams, Link } from 'react-router-dom';
 
 // import { PostAuthor } from './PostAuthor';
@@ -9,18 +9,18 @@ import { selectPostById } from './postsSlice';
 import { getComments } from '../comments/commentsSlice';
 
 export const SinglePostPage = () => {
-  // const { postId } = match.params;
   const params = useParams();
   const postId = params.postId;
-  console.log(postId);
+  // console.log(postId);
+  const dispatch = useDispatch();
 
-  const { comments, isLoading, isError, isSuccess, message } = useSelector(
-    (state) => state.comments
-  );
-
-  console.log(comments);
+  // const commentsForPost = useSelector((state) =>
+  //   selectCommentsByPost(state, postId)
+  // );
 
   const post = useSelector((state) => selectPostById(state, postId));
+  // const comments = useSelector((state) => selectAllComments(state, postId));
+  console.log(getComments(postId));
 
   if (!post) {
     return (
@@ -44,12 +44,12 @@ export const SinglePostPage = () => {
               ? `Last edited: ${post.updated_at}`
               : ''}
           </div>
-          <img src={`${post.image}`} alt="" />
-          <p>
+          {/* <img src={`${post.image}`} alt="" /> */}
+          {/* <p>
             {comments.map((comment) => (
               <li key={comment.id}>comment</li>
             ))}
-          </p>
+          </p> */}
           <p>{post.comments !== 0 ? post.comments + ' comments' : ''}</p>
 
           <Link to={`/editPost/${post.id}`} className="button">

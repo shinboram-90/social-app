@@ -22,18 +22,22 @@ const limiter = rateLimit({
 
 const app = express();
 
-// const corsOptions = {
-//   origin: '*',
-//   credentials: true,
-//   'allowedHeaders': ['sessionId', 'Content-Type'],
-//   'exposedHeaders': ['sessionId'],
-//   'methods': 'GET,HEAD,PUT,PATCH,POST,DELETE',
-//   'preflightContinue': false,
-//   'Access-Control-Allow-Credentials': true,
-// };
+const corsOptions = {
+  origin: 'http://localhost:3000',
+  'Cross-Origin-Resource-Policy': 'cross-origin',
+  // credentials: true,
+  // 'allowedHeaders': ['sessionId', 'Content-Type'],
+  // 'exposedHeaders': ['sessionId'],
+  // 'methods': 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  // 'preflightContinue': false,
+  // 'Access-Control-Allow-Credentials': true,
+};
+// app.use(cors(corsOptions));
 
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+  res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
+  res.setHeader('Cross-Origin-Embedder-Policy', 'require-corp');
   res.setHeader(
     'Access-Control-Allow-Headers',
     'Origin, X-Requested-With, Content, Accept, Content-Type, Authorization'
@@ -46,7 +50,6 @@ app.use((req, res, next) => {
   next();
 });
 
-// app.use(cors(corsOptions));
 app.use(helmet());
 app.use(cookieParser());
 app.use(express.json());

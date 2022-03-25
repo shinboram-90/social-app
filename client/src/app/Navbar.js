@@ -55,7 +55,8 @@ const HeaderUserMenu = () => {
       aria-label="Account menu"
       onClick={onMenuButtonClick}
     >
-      {' '}
+      {/* TO DO A NE METTRE QUE SI LOGGEDIN */}
+
       {user ? (
         <EuiAvatar name={user.user[0].username} size="s" />
       ) : (

@@ -1,39 +1,24 @@
 import axios from '../../api/axios';
 // import { selectPostById } from './postsSlice';
 
-const createComment = async (postId, commentId, token) => {
+const createComment = async (postId, commentId) => {
   const API_COMMENT = `api/${postId}/comments/`;
-  const config = {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  };
-
-  const response = await axios.post(API_COMMENT + commentId, config);
+  const response = await axios.post(API_COMMENT + commentId);
+  console.log(response.data);
   return response.data;
 };
 
-const getComments = async (postId, token) => {
+const getComments = async (postId) => {
   const API_COMMENT = `api/${postId}/comments/`;
-  const config = {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  };
-
-  const response = await axios.get(API_COMMENT, config);
+  const response = await axios.get(API_COMMENT);
+  console.log(response.data);
   return response.data;
 };
 
-const deleteComment = async (postId, commentId, token) => {
+const deleteComment = async (postId, commentId) => {
   const API_COMMENT = `api/${postId}/comments/`;
-  const config = {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  };
-
-  const response = await axios.delete(API_COMMENT + commentId, config);
+  const response = await axios.delete(API_COMMENT + commentId);
+  console.log(response.data);
   return response.data;
 };
 

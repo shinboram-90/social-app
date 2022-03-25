@@ -13,8 +13,7 @@ export const createComment = createAsyncThunk(
   'comments/create',
   async (commentData, thunkAPI) => {
     try {
-      const token = thunkAPI.getState().auth.user.token;
-      return await commentService.createComment(commentData, token);
+      return await commentService.createComment(commentData);
     } catch (error) {
       const message =
         (error.response &&
@@ -28,9 +27,10 @@ export const createComment = createAsyncThunk(
 );
 
 export const getComments = createAsyncThunk(
-  'comments/create',
-  async (commentData, thunkAPI) => {
+  'comments/fetchComments',
+  async (postId, thunkAPI) => {
     try {
+      return await commentService.getComments(postId);
     } catch (error) {
       const message =
         (error.response &&
@@ -44,9 +44,10 @@ export const getComments = createAsyncThunk(
 );
 
 export const deleteComment = createAsyncThunk(
-  'comments/create',
+  'comments/deleteComment',
   async (commentData, thunkAPI) => {
     try {
+      return await commentService.deleteComment(commentData);
     } catch (error) {
       const message =
         (error.response &&
@@ -65,15 +66,15 @@ const commentsSlice = createSlice({
   reducers: {},
   extraReducers(builder) {
     builder
-      .addCase(createComment.pending, (state) => {
+      .addCase(getComments.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(createComment.fulfilled, (state, action) => {
+      .addCase(getComments.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;
         state.comments.push(action.payload);
       })
-      .addCase(createComment.rejected, (state, action) => {
+      .addCase(getComments.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
         state.message = action.payload;
