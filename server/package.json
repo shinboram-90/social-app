@@ -35,6 +35,9 @@
     "nodemon": "^2.0.15",
     "react-cookie": "^4.1.1"
   },
+  "devServer": {
+    "proxy": {"*": "http://[::1]:3000"}
+  },
   "bugs": {
     "url": "https://github.com/shinboram-90/social-app/issues"
   },

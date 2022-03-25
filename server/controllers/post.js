@@ -13,6 +13,17 @@ exports.getAllPosts = async (req, res, next) => {
   }
 };
 
+exports.getAllMyPosts = async (req, res, next) => {
+  const myId = req.params.myId;
+  try {
+    const postList = await Post.findByMyId(myId);
+    res.status(200).json({ myPosts: postList });
+  } catch (e) {
+    console.log(e);
+    res.sendStatus(500);
+  }
+};
+
 exports.getOnePost = async (req, res, next) => {
   try {
     const post = await Post.findById(req.params.id);
@@ -163,10 +174,19 @@ exports.deletePost = async (req, res, next) => {
 // <------------------- HANDLING LIKES ------------------->
 
 exports.getLikes = async (req, res, next) => {
-  const postId = req.params.id;
-  console.log(postId);
   try {
-    const likes = await Like.find(postId);
+    const likes = await Like.getLikes();
+    res.status(200).json({ totalLikes: likes });
+  } catch (e) {
+    console.log(e);
+    res.sendStatus(500);
+  }
+};
+
+exports.getLikesByPost = async (req, res, next) => {
+  const postId = req.params.id;
+  try {
+    const likes = await Like.getLikesForOnePost(postId);
     res.status(200).json({ totalLikes: likes });
   } catch (e) {
     console.log(e);

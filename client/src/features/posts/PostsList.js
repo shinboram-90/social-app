@@ -29,6 +29,8 @@ const PostExcerpt = ({ post }) => {
 };
 
 export const PostsList = () => {
+  const { user } = useSelector((state) => state.auth);
+  console.log(user);
   const dispatch = useDispatch();
   const posts = useSelector(selectAllPosts);
 

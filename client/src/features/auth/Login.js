@@ -6,12 +6,12 @@ import { login, reset } from '../auth/authSlice';
 import Spinner from '../../components/Spinner';
 
 const Login = () => {
-  const [data, setData] = useState({
+  const [userData, setData] = useState({
     username: '',
     password: '',
   });
 
-  const { username, password } = data;
+  const { username, password } = userData;
 
   const { user, isLoading, isError, isSuccess, message } = useSelector(
     (state) => state.auth

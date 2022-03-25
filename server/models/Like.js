@@ -6,12 +6,25 @@ const Like = function (like) {
   this.is_liked = like.is_liked;
 };
 
-Like.find = async (postId) => {
+Like.getLikes = async () => {
   return new Promise((resolve, reject) => {
     pool.query(
-      'SELECT COUNT(l.id) total FROM likes l INNER JOIN posts p ON l.post_id = p.id WHERE p.id = ? and l.is_liked = 1',
-      // for one post SELECT p.id, COUNT(l.id) total FROM `posts` p, likes l WHERE p.id = l.post_id AND p.id = 88 GROUP BY p.id
-      // SELECT p.id, COUNT(l.id) total FROM `posts` p, likes l WHERE p.id = l.post_id GROUP BY p.id
+      'SELECT p.id, COUNT(l.id) total FROM posts p, likes l WHERE p.id = l.post_id and l.is_liked = 1 GROUP BY p.id',
+      (err, likes) => {
+        if (err) {
+          return reject(err);
+        }
+        console.log(likes);
+        return resolve(likes);
+      }
+    );
+  });
+};
+
+Like.getLikesForOnePost = async (postId) => {
+  return new Promise((resolve, reject) => {
+    pool.query(
+      `SELECT p.id, COUNT(l.id) total FROM posts p, likes l WHERE p.id = l.post_id and l.is_liked = 1 AND p.id = ? GROUP BY p.id`,
       postId,
       (err, likes) => {
         if (err) {
