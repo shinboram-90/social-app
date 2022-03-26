@@ -1,12 +1,14 @@
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 import { postUpdated, selectPostById } from './postsSlice';
 // import { selectUserById } from '../users/usersSlice';
 
-export const EditPostForm = ({ match }) => {
-  const { postId } = match.params;
+export const EditPostForm = () => {
+  const params = useParams();
+  const postId = params.postId;
 
   const post = useSelector((state) => selectPostById(state, postId));
   // const users = useSelector((state) => selectUserById(state, userId));
@@ -26,14 +28,6 @@ export const EditPostForm = ({ match }) => {
       navigate(`/posts/${postId}`);
     }
   };
-
-  // const usersOptions = users.map((user) => (
-  //   <option key={user.id} value={user.id}>
-  //     {user.username}
-  //   </option>
-  // ));
-
-  //need to get the current user instead...
 
   return (
     <section>

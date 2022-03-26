@@ -33,7 +33,7 @@ const Profile = () => {
   };
 
   return (
-    <section style={{ padding: 100 }}>
+    <section>
       <h1>My Profile</h1>
       <br />
       <div>

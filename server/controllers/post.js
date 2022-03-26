@@ -35,6 +35,7 @@ exports.getOnePost = async (req, res, next) => {
 };
 
 exports.createPost = async (req, res, next) => {
+  console.log(req.auth.userId);
   let imageArray = [];
   if (req.files) {
     // console.log(req.files.image[0].filename);
@@ -48,7 +49,7 @@ exports.createPost = async (req, res, next) => {
 
   try {
     const post = new Post({
-      user_id: req.body.user_id,
+      user_id: req.auth.userId,
       title: req.body.title,
       content: req.body.content,
       status: 'published',
@@ -64,7 +65,7 @@ exports.createPost = async (req, res, next) => {
       res.status(401).json({ error: 'Query not completed' });
     }
   } catch (e) {
-    res.status(404).json({ error: 'Marked fields cannot be empty' });
+    res.status(403).json({ error: 'Marked fields cannot be empty' });
   }
 };
 

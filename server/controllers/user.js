@@ -61,9 +61,9 @@ exports.deleteUser = async (req, res, next) => {
     }
 
     // This line allow us to verify if the same user can delete his profile
-    if (user[0].id !== req.userId) {
+    if (user[0].id !== req.auth.userId) {
       console.log(typeof user[0].id);
-      console.log(typeof req.userId);
+      console.log(typeof req.auth.userId);
       return res
         .status(403)
         .json({ error: 'Unauthorized request, id not matching' });
@@ -88,14 +88,12 @@ exports.deleteUser = async (req, res, next) => {
 };
 
 exports.modifyUser = async (req, res, next) => {
-  const id = req.userId.userId;
+  const id = req.auth.userId;
   console.log(id);
   // use only one = sign because one is number, and second is string
   if (id != req.params.id) {
     res.status(404).json({ message: 'Not the same user ID' });
   } else {
-    // console.log(`regreq.userId: ${req.userId}`);
-
     // building the user object, spread gets all details, just building the avatar file
     if (req.files) {
       const user = {

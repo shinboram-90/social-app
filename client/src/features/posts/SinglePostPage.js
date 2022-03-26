@@ -18,7 +18,7 @@ export const SinglePostPage = () => {
     (state) => state.comments
   );
 
-  console.log(comments);
+  console.log(getComments);
 
   const post = useSelector((state) => selectPostById(state, postId));
 
@@ -31,7 +31,7 @@ export const SinglePostPage = () => {
   }
 
   return (
-    <section style={{ padding: 100 }}>
+    <section>
       <article className="post">
         {console.log(post)}
         <h2>{post.title}</h2>

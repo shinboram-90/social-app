@@ -21,7 +21,7 @@ export const UserPage = () => {
   ));
 
   return (
-    <section style={{ padding: 100 }}>
+    <section>
       {/* <h2>{user}</h2> */}
       <div>{console.log(user)}</div>
       <ul>
@@ -29,7 +29,7 @@ export const UserPage = () => {
         <li>{user.first_name}</li>
         <li>{user.last_name}</li>
         <li>{user.email}</li>
-        <img src={`${user.avatar}`} alt="avatar" />
+        <img src={`${user.avatar}`} alt="avatar" crossOrigin="true" />
       </ul>
 
       <ul>{postTitles}</ul>

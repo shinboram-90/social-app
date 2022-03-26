@@ -129,7 +129,7 @@ export const Navbar = () => {
   const users = useSelector(selectAllUsers);
 
   return (
-    <>
+    <nav style={{ marginBottom: 100 }}>
       <EuiHeader position="fixed">
         <EuiHeaderSection>
           <EuiHeaderSectionItem>
@@ -157,6 +157,6 @@ export const Navbar = () => {
           </EuiHeaderSectionItem>
         </EuiHeaderSection>
       </EuiHeader>
-    </>
+    </nav>
   );
 };
