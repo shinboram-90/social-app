@@ -6,7 +6,7 @@ import { useParams, Link } from 'react-router-dom';
 // import {ReactionButtons} from './ReactionButtons'
 import { selectPostById } from './postsSlice';
 
-import { getComments } from '../comments/commentsSlice';
+import { fetchComments } from '../comments/commentsSlice';
 
 export const SinglePostPage = () => {
   // const { postId } = match.params;
@@ -18,7 +18,7 @@ export const SinglePostPage = () => {
     (state) => state.comments
   );
 
-  console.log(getComments);
+  console.log(fetchComments);
 
   const post = useSelector((state) => selectPostById(state, postId));
 
@@ -44,13 +44,15 @@ export const SinglePostPage = () => {
               ? `Last edited: ${post.updated_at}`
               : ''}
           </div>
-          <img src={`${post.image}`} alt="" />
+
+          <img src={post.image} alt="" crossOrigin="true" />
+          {/*
           <p>
             {comments.map((comment) => (
               <li key={comment.id}>comment</li>
             ))}
           </p>
-          <p>{post.comments !== 0 ? post.comments + ' comments' : ''}</p>
+          <p>{post.comments !== 0 ? post.comments + ' comments' : ''}</p> */}
 
           <Link to={`/editPost/${post.id}`} className="button">
             Edit post

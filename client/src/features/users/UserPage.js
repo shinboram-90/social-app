@@ -29,6 +29,7 @@ export const UserPage = () => {
         <li>{user.first_name}</li>
         <li>{user.last_name}</li>
         <li>{user.email}</li>
+        <li>Biography: {user.biography && user.biography}</li>
         <img src={`${user.avatar}`} alt="avatar" crossOrigin="true" />
       </ul>
 

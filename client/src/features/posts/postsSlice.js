@@ -6,16 +6,20 @@ import {
 } from '@reduxjs/toolkit';
 import axios from '../../api/axios';
 
-const postsAdapter = createEntityAdapter();
+const postsAdapter = createEntityAdapter({
+  selectId: (post) => post.id,
+});
 
 const initialState = postsAdapter.getInitialState({
   status: 'idle',
   error: null,
+  data: null,
 });
 
 export const fetchPosts = createAsyncThunk('posts/fetchPosts', async () => {
-  const response = await axios.get('api/posts');
-  return response.data.postList;
+  const { data } = await axios.get('api/posts');
+  console.log(data);
+  return data.postList;
 });
 
 export const addNewPost = createAsyncThunk(
@@ -26,10 +30,34 @@ export const addNewPost = createAsyncThunk(
   }
 );
 
+export const updatePost = createAsyncThunk(
+  'posts/updatePost',
+  async (post, thunkAPI) => {
+    const { id, title, content, image } = post;
+    const response = await axios
+      .put(`api/posts/${id}`, { title, content, image })
+      .catch((err) => {
+        thunkAPI.rejectWithValue(err);
+        throw err;
+      });
+    console.log(response.data);
+    return response.data;
+  }
+);
+
+export const deletePost = createAsyncThunk(
+  'posts/deletePost',
+  async (postId) => {
+    const response = await axios.delete(`api/posts/${postId}`);
+    return response.data;
+  }
+);
+
 const postsSlice = createSlice({
   name: 'posts',
   initialState,
   reducers: {
+    updateOnePost: postsAdapter.updateOne,
     // reactionAdded(state, action) {
     //   const { postId, reaction } = action.payload
     //   const existingPost = state.entities[postId]
@@ -37,12 +65,17 @@ const postsSlice = createSlice({
     //     existingPost.reactions[reaction]++
     //   }
     // },
+    // postDeleted: (state, action) => {
+    //   console.log(state.posts);
+    //   state.posts = state.posts.filter((post) => post.id !== action.payload);
+    // },
     postUpdated(state, action) {
-      const { id, title, content } = action.payload;
+      const { id, title, content, image } = action.payload;
       const existingPost = state.entities[id];
       if (existingPost) {
         existingPost.title = title;
         existingPost.content = content;
+        existingPost.image = image;
       }
     },
   },
@@ -60,11 +93,13 @@ const postsSlice = createSlice({
         state.status = 'failed';
         state.error = action.error.message;
       })
-      .addCase(addNewPost.fulfilled, postsAdapter.addOne);
+      .addCase(updatePost.fulfilled, postsAdapter.upsertOne)
+      .addCase(addNewPost.fulfilled, postsAdapter.addOne)
+      .addCase(deletePost.fulfilled, postsAdapter.removeOne);
   },
 });
 
-export const { postAdded, postUpdated } = postsSlice.actions;
+export const { postUpdated } = postsSlice.actions;
 
 export default postsSlice.reducer;
 

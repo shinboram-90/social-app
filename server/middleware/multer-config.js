@@ -5,7 +5,6 @@ const MIME_TYPES = {
   'image/jpeg': 'jpg',
   'image/png': 'png',
   'image/webp': 'webp',
-  // 'image/heic': 'heic',
   'image/gif': 'gif',
 };
 
@@ -27,16 +26,8 @@ const storage = multer.diskStorage({
   },
 });
 
-module.exports = multer({ storage }).fields([
-  {
-    name: 'avatar',
-    maxCount: 1,
-  },
-  {
-    name: 'image',
-    maxCount: 5,
-  },
-]);
+module.exports = multer({ storage: storage }).single('image');
+// module.exports = multer({ storage: storage }).single('avatar');
 
 // image = post.image, maximum 5 uploads
 // module.exports = multer({ storage }).array('image', 5);

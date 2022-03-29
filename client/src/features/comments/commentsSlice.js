@@ -1,61 +1,52 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import commentService from './commentService';
+import {
+  createSlice,
+  createAsyncThunk,
+  createEntityAdapter,
+} from '@reduxjs/toolkit';
+import axios from '../../api/axios';
+// import commentService from './commentService';
 
-const initialState = {
-  comments: [],
-  isError: false,
-  isSuccess: false,
-  isLoading: false,
-  message: '',
-};
+const commentsAdapter = createEntityAdapter({
+  selectId: (comment) => comment.id,
+});
 
-export const createComment = createAsyncThunk(
-  'comments/create',
-  async (commentData, thunkAPI) => {
-    try {
-      const token = thunkAPI.getState().auth.user.token;
-      return await commentService.createComment(commentData, token);
-    } catch (error) {
-      const message =
-        (error.response &&
-          error.response.data &&
-          error.response.data.message) ||
-        error.message ||
-        error.toString();
-      return thunkAPI.rejectWithValue(message);
-    }
+const initialState = commentsAdapter.getInitialState({
+  status: 'idle',
+  error: null,
+  data: null,
+});
+
+export const fetchComments = createAsyncThunk(
+  'comments/fetchComments',
+  async (postId) => {
+    const { data } = await axios.get(`api/posts/${postId}/comments`);
+    console.log(data);
+    return data.commentList;
   }
 );
 
-export const getComments = createAsyncThunk(
-  'comments/create',
-  async (commentData, thunkAPI) => {
-    try {
-    } catch (error) {
-      const message =
-        (error.response &&
-          error.response.data &&
-          error.response.data.message) ||
-        error.message ||
-        error.toString();
-      return thunkAPI.rejectWithValue(message);
-    }
+export const addNewComment = createAsyncThunk(
+  'comments/addNewComment',
+  async (postId, initialComment) => {
+    const response = await axios.comment(
+      `api/posts/${postId}/comments`,
+      initialComment
+    );
+    return response.data.newComment;
   }
 );
 
-export const deleteComment = createAsyncThunk(
-  'comments/create',
-  async (commentData, thunkAPI) => {
-    try {
-    } catch (error) {
-      const message =
-        (error.response &&
-          error.response.data &&
-          error.response.data.message) ||
-        error.message ||
-        error.toString();
-      return thunkAPI.rejectWithValue(message);
-    }
+export const updatecomment = createAsyncThunk(
+  'comments/updatecomment',
+  async (comment, thunkAPI) => {
+    const response = await axios
+      .put(`api/comments/${comment.id}`, comment)
+      .catch((err) => {
+        thunkAPI.rejectWithValue(err);
+        throw err;
+      });
+    console.log(response.data);
+    return response.data;
   }
 );
 
@@ -65,18 +56,30 @@ const commentsSlice = createSlice({
   reducers: {},
   extraReducers(builder) {
     builder
-      .addCase(createComment.pending, (state) => {
+      .addCase(addNewComment.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(createComment.fulfilled, (state, action) => {
+      .addCase(addNewComment.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;
         state.comments.push(action.payload);
       })
-      .addCase(createComment.rejected, (state, action) => {
+      .addCase(addNewComment.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
         state.message = action.payload;
+      })
+      .addCase(fetchComments.pending, (state, action) => {
+        state.status = 'loading';
+      })
+      .addCase(fetchComments.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        // Add any fetched Comments to the array
+        commentsAdapter.upsertMany(state, action.payload);
+      })
+      .addCase(fetchComments.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.error.message;
       });
     // .addCase(getComments.pending, (state) => {
     //   state.isLoading = true;

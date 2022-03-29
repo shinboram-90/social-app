@@ -41,7 +41,7 @@ const Profile = () => {
           <div>You are logged in as {user.user[0].username}</div>
         </header>
         {user.user[0].avatar ? (
-          <img alt="avatar" src={user.user[0].avatar} />
+          <img alt="avatar" src={user.user[0].avatar} crossOrigin="true" />
         ) : (
           ''
         )}

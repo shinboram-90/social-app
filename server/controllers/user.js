@@ -95,16 +95,17 @@ exports.modifyUser = async (req, res, next) => {
     res.status(404).json({ message: 'Not the same user ID' });
   } else {
     // building the user object, spread gets all details, just building the avatar file
-    if (req.files) {
+    if (req.file) {
+      console.log(req.file);
       const user = {
         ...req.body,
         avatar: `${req.protocol}://${req.get('host')}/uploads/avatars/${
-          req.files.avatar[0].filename
+          req.file.filename
         }`,
       };
       try {
         const getUser = await User.findById(id);
-        console.log(req.files);
+        console.log(req.file);
         const avatar = getUser[0].avatar;
 
         // User already has one avatar, unlink the existing one and replace it
@@ -113,7 +114,7 @@ exports.modifyUser = async (req, res, next) => {
 
           fs.unlink(`uploads/avatars/${filename}`, async () => {
             const updatedUser = await User.update(user, id);
-            // console.log(req.files.avatar);
+            // console.log(req.file.avatar);
             if (updatedUser) {
               res.status(200).json({
                 modifications: req.body,

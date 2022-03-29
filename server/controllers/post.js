@@ -36,101 +36,98 @@ exports.getOnePost = async (req, res, next) => {
 
 exports.createPost = async (req, res, next) => {
   console.log(req.auth.userId);
-  let imageArray = [];
-  if (req.files) {
-    // console.log(req.files.image[0].filename);
 
-    const newFiles = Object.values(req.files.image);
-    const imageUrl = `${req.protocol}://${req.get('host')}`;
-    newFiles.forEach((f) => {
-      imageArray.push(`${imageUrl}/uploads/images/${f.filename}`);
-    });
-  }
-
-  try {
-    const post = new Post({
+  if (req.file) {
+    const post = {
       user_id: req.auth.userId,
       title: req.body.title,
       content: req.body.content,
       status: 'published',
-      image: JSON.stringify(imageArray),
-    });
-    // console.log(imageArray);
-    console.log(post);
-
-    const postCreated = await Post.create(post);
-    if (postCreated) {
-      res.status(201).json({ newPost: post });
-    } else {
-      res.status(401).json({ error: 'Query not completed' });
+      image: `${req.protocol}://${req.get('host')}/uploads/images/${
+        req.file.filename
+      }`,
+    };
+    try {
+      console.log(post);
+      const postCreated = await Post.create(post);
+      if (postCreated) {
+        res.status(201).json({ newPost: post });
+      } else {
+        res.status(401).json({ error: 'Query not completed' });
+      }
+    } catch (e) {
+      res.status(403).json({ error: e });
     }
-  } catch (e) {
-    res.status(403).json({ error: 'Marked fields cannot be empty' });
+  } else {
+    const post = {
+      user_id: req.auth.userId,
+      title: req.body.title,
+      content: req.body.content,
+      status: 'published',
+    };
+
+    try {
+      const postCreated = await Post.create(post);
+      if (postCreated) {
+        res.status(201).json({ newPost: post });
+      } else {
+        res.status(401).json({ error: 'Query not completed' });
+      }
+    } catch (e) {
+      res.status(403).json({ error: 'Marked fields cannot be empty' });
+    }
   }
 };
 
 exports.modifyPost = async (req, res, next) => {
   const id = req.params.id;
 
-  let imageArray = [];
-  if (req.files) {
-    // console.log(req.files.image[0].filename);
+  if (req.file) {
+    console.log(req.file);
+    const post = {
+      ...req.body,
+      image: `${req.protocol}://${req.get('host')}/uploads/images/${
+        req.file.filename
+      }`,
+    };
+    try {
+      const getPost = await Post.findById(id);
+      const image = getPost[0].image;
 
-    const newFiles = Object.values(req.files.image);
-    const imageUrl = `${req.protocol}://${req.get('host')}`;
-    newFiles.forEach((f) => {
-      imageArray.push(`${imageUrl}/uploads/images/${f.filename}`);
-    });
-  }
-
-  // building the post object, spread gets all details, just building the image file
-  const post = {
-    ...req.body,
-    image: JSON.stringify(imageArray),
-  };
-
-  try {
-    const getPost = await Post.findById(id);
-    const image = JSON.parse(getPost[0].image);
-
-    // Post already has image(s), user is adding more to them
-    if (image) {
-      for (const f of image) {
-        imageArray.push(f);
-      }
-
-      const newFiles = Object.values(req.files.image);
-      const imageUrl = `${req.protocol}://${req.get('host')}`;
-      newFiles.forEach((f) => {
-        imageArray.push(`${imageUrl}/uploads/images/${f.filename}`);
-      });
-
-      const post = {
-        ...req.body,
-        image: JSON.stringify(imageArray),
-      };
-      const updatedPost = await Post.update(post, id);
-      // console.log(req.files.image);
-      if (updatedPost) {
-        res.status(200).json({
-          modifications: post,
+      // Post already has image(s), user is adding more to them
+      if (image) {
+        const filename = image.split('images/')[1];
+        fs.unlink(`uploads/images/${filename}`, async () => {
+          const updatedPost = await Post.update(post, id);
+          if (updatedPost) {
+            res.status(200).json({
+              modifications: post,
+            });
+          } else {
+            res.status(404).json({ message: 'Cannot modify post infos' });
+          }
         });
       } else {
-        res.status(404).json({ message: 'Cannot modify post infos' });
+        const updatedPost = await Post.update(post, id);
+        if (updatedPost) {
+          res.status(200).json({
+            modifications: post,
+          });
+        } else {
+          res.status(404).json({ message: 'Cannot modify post infos' });
+        }
       }
-    } else {
-      const updatedPost = await Post.update(post, id);
-      if (updatedPost) {
-        res.status(200).json({
-          modifications: post,
-        });
-      } else {
-        res.status(404).json({ message: 'Cannot modify post infos' });
-      }
+    } catch (e) {
+      console.log(e);
+      res.sendStatus(500);
     }
-  } catch (e) {
-    console.log(e);
-    res.sendStatus(500);
+  } else {
+    const updatedPost = await Post.update(req.body, id);
+    if (updatedPost) {
+      res.status(200).json({
+        modifications: req.body,
+      });
+    }
   }
 };
 
@@ -143,28 +140,26 @@ exports.deletePost = async (req, res, next) => {
     }
 
     // This line allow us to verify if the post's owner can delete his post
-    else if (post[0].user_id !== req.auth.userId) {
+    if (post[0].user_id !== req.auth.userId) {
       return res
         .status(403)
         .json({ error: 'Unauthorized request, id not matching' });
-    } else {
-      const image = JSON.parse(post[0].image);
+    }
+    const image = post[0].image;
 
-      if (image) {
-        // loop to unlink all images
-        for (const f of image) {
-          fs.unlink(`uploads/images/${f.split('/images/')[1]}`, (err) => {
-            if (err) throw err;
-          });
-        }
+    if (image) {
+      // loop to unlink all images
+      const filename = await image.split('/images/')[1];
+
+      fs.unlink(`uploads/images/${filename}`, async () => {
         const deletePost = await Post.delete(id);
-        return res.status(200).json({
-          message: 'Post successfully deleted with all images',
+        res.status(200).json({
+          message: 'Post successfully deleted with image',
         });
-      } else {
-        const deletePost = await Post.delete(id);
-        return res.status(200).json({ message: 'Post successfully deleted' });
-      }
+      });
+    } else {
+      const deletePost = await Post.delete(id);
+      return res.status(200).json({ message: 'Post successfully deleted' });
     }
   } catch (e) {
     console.log(e);
